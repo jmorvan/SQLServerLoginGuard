@@ -1,0 +1,59 @@
+﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package Name="SQL Server Login Guard Service" Manufacturer="TODO Manufacturer" Version="1.0.0.0" UpgradeCode="9703d932-1f97-4469-988e-e81a8faa7369">
+    <MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)" />
+    
+    <!-- Define the directory structure -->
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFiles64Folder">
+
+        <!-- Create a folder inside program files -->
+        <Directory Id="ROOTDIRECTORY" Name="EVEOS">
+
+          <!-- Create a folder within the parent folder given the name -->
+          <Directory Id="INSTALLFOLDER" Name="SQL Server Login Guard" />
+        </Directory>
+      </Directory>
+    </Directory>
+
+    <!-- The files inside this DirectoryRef are linked to
+             the App.WindowsService directory via INSTALLFOLDER -->
+    <DirectoryRef Id="INSTALLFOLDER">
+
+      <!-- Create a single component which is the App.WindowsService.exe file -->
+      <Component Id="ServiceExecutable" Bitness="always64">
+
+        <!-- Copies the App.WindowsService.exe file using the
+                     project reference preprocessor variables -->
+        <File Id="SQLServerLoginGuard.exe"
+              Source="$(var.SQLServerLoginGuard.TargetDir)\SQLServerLoginGuard.exe"
+              KeyPath="true" />
+
+        <!-- Remove all files from the INSTALLFOLDER on uninstall -->
+        <RemoveFile Id="ALLFILES" Name="*.*" On="both" />
+
+        <!-- Tell WiX to install the Service -->
+        <ServiceInstall Id="ServiceInstaller"
+                        Type="ownProcess"
+                        Name="SQLServerLoginGuard"
+                        DisplayName="SQL Server Login Guard"
+                        Description="Adds suspicious IPs with failed login attempts to the windows firewall. thos IPs will be blocked."
+                        Start="auto"
+                        ErrorControl="normal" />
+
+        <!-- Tell WiX to start the Service -->
+        <ServiceControl Id="StartService"
+                        Start="install"
+                        Stop="both"
+                        Remove="uninstall"
+                        Name="SQLServerLoginGuard"
+                        Wait="true" />
+      </Component>
+    </DirectoryRef>
+    
+    <!-- Tell WiX to install the files -->
+    <Feature Id="Service" Title="SQL Server Login Guard Setup" Level="1">
+      <ComponentRef Id="ServiceExecutable" />
+    </Feature>
+    
+  </Package>
+</Wix>
