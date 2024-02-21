@@ -5,54 +5,72 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
-namespace GuardTest
+namespace SQLServerLoginGuard
 {
-    internal class Program
+    public class SQLServerLoginGuardHelper
     {
-        static void Main(string[] args)
+
+        int delay = 60000;
+        int eventLinesToRequest = 100;
+        int blacklistTreshold = 10;
+
+
+        public SQLServerLoginGuardHelper()
         {
 
-            EventLog log = new EventLog("Application");
-            var entries = log.Entries.Cast<EventLogEntry>()
-                         .Where(x => x.InstanceId == 3221243928)
-                         .Select(x => new
-                         {
-                             x.MachineName,
-                             x.Site,
-                             x.Source,
-                             x.Message,
-                             x.TimeGenerated,
-                             Ip = getIp(x.Message)
-                         }).Take(100).OrderByDescending(x => x.TimeGenerated).ToList();
+        }
+
+        public SQLServerLoginGuardHelper(int _delay, int _eventLinesToRequest, int _blacklistTreshold)
+        {
+            delay = _delay;
+            eventLinesToRequest = _eventLinesToRequest;
+            blacklistTreshold = _blacklistTreshold;
+        }
+
+        public void serviceWorker()
+        {
+            serviceWorker(null, null);
+        }
+
+        public void serviceWorker(object sender, System.Timers.ElapsedEventArgs args)
+        {
+
+
             var dic = new Dictionary<string, int>();
 
 
+            var entries = getLogEntries();
 
             entries.ForEach(x =>
             {
-                if (dic.ContainsKey(x.Ip)) dic[x.Ip]++;
-                else dic[x.Ip] = 1;
+                var ip = getIp(x.Message);
+                if (dic.ContainsKey(ip)) dic[ip]++;
+                else dic[ip] = 1;
             });
 
             Console.WriteLine("SUSPICIOUS IPs :");
-            if (dic.Count > 0) Console.WriteLine("nothing to declare");
+            if (dic.Count < 1) Console.WriteLine("nothing found !");
             foreach (var entry in dic)
             {
                 Console.WriteLine(entry);
             }
 
-            dic.Where(x => x.Value > 10).ToList().ForEach(x => setFwRule(x.Key));
+            dic.Where(x => x.Value >= blacklistTreshold).ToList().ForEach(x => setFwRule(x.Key));
 
-
-
-            Console.ReadLine();
         }
 
-        static void setFwRule(string ip)
+        public List<EventLogEntry> getLogEntries()
+        {
+
+            var log = new EventLog("Application");
+            return log.Entries.Cast<EventLogEntry>()
+                          .Where(x => x.InstanceId == 3221243928 || x.EventID == 18456)
+                          .OrderByDescending(x => x.TimeWritten).Take(eventLinesToRequest).ToList();
+        }
+
+        public void setFwRule(string ip)
         {
 
             var name = $"SQL Suspicious {ip}";
@@ -62,7 +80,7 @@ namespace GuardTest
             Type tNetFwPolicy2 = Type.GetTypeFromProgID("HNetCfg.FwPolicy2");
             dynamic fwPolicy2 = Activator.CreateInstance(tNetFwPolicy2) as dynamic;
             IEnumerable Rules = fwPolicy2.Rules as IEnumerable;
-            
+
             var rNames = new List<string>();
 
             foreach (dynamic rule in Rules)
@@ -96,13 +114,13 @@ namespace GuardTest
 
         }
 
-        static string getIp(string msg)
+        public string getIp(string msg)
         {
             string pattern = @"(?:[0-9]{1,3}\.){3}[0-9]{1,3}";
             RegexOptions options = RegexOptions.Multiline;
             var res = Regex.Matches(msg, pattern, options);
 
-            if (res.Count < 1 )
+            if (res.Count < 1)
             {
                 return null;
             }

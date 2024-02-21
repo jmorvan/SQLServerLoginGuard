@@ -1,22 +1,26 @@
 ﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
   <Package Name="SQL Server Login Guard Service" Manufacturer="TODO Manufacturer" Version="1.0.0.0" UpgradeCode="9703d932-1f97-4469-988e-e81a8faa7369">
     <MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)" />
+
+    <MediaTemplate EmbedCab="yes" />
     
-    <!-- Define the directory structure -->
+     <!--Define the directory structure--> 
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="ProgramFiles64Folder">
 
-        <!-- Create a folder inside program files -->
+         <!--Create a folder inside program files--> 
         <Directory Id="ROOTDIRECTORY" Name="EVEOS">
 
-          <!-- Create a folder within the parent folder given the name -->
+           <!--Create a folder within the parent folder given the name--> 
           <Directory Id="INSTALLFOLDER" Name="SQL Server Login Guard" />
         </Directory>
       </Directory>
     </Directory>
 
+
+
     <!-- The files inside this DirectoryRef are linked to
-             the App.WindowsService directory via INSTALLFOLDER -->
+             the App.WindowsService directory via INSTALLFOLDER  -->
     <DirectoryRef Id="INSTALLFOLDER">
 
       <!-- Create a single component which is the App.WindowsService.exe file -->
@@ -25,9 +29,10 @@
         <!-- Copies the App.WindowsService.exe file using the
                      project reference preprocessor variables -->
         <File Id="SQLServerLoginGuard.exe"
-              Source="$(var.SQLServerLoginGuard.TargetDir)\SQLServerLoginGuard.exe"
+              Source="$(var.SQLServerLoginGuardService.TargetDir)\SQLServerLoginGuard.exe"
               KeyPath="true" />
-
+       
+        
         <!-- Remove all files from the INSTALLFOLDER on uninstall -->
         <RemoveFile Id="ALLFILES" Name="*.*" On="both" />
 
@@ -48,11 +53,17 @@
                         Name="SQLServerLoginGuard"
                         Wait="true" />
       </Component>
+
+      <Component Id='HelperDLL' Guid='99f4f944-c399-4829-baab-b5458ff4b944'>
+        <File Id='HelperDLL' Name='SQLServerLoginGuardHelper.dll' DiskId='1' Source='$(var.SQLServerLoginGuardService.TargetDir)\SQLServerLoginGuardHelper.dll' KeyPath='yes' />
+      </Component>
+      
     </DirectoryRef>
     
     <!-- Tell WiX to install the files -->
     <Feature Id="Service" Title="SQL Server Login Guard Setup" Level="1">
       <ComponentRef Id="ServiceExecutable" />
+      <ComponentRef Id="HelperDLL" />
     </Feature>
     
   </Package>
