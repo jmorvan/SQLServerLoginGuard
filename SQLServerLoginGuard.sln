@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQLServerLoginGuard", "SQLS
 EndProject
 Project("{B7DD6F7E-DEF8-4E67-B5B7-07EF123DB6F0}") = "SQL Server Login Guard Installer", "SQL Server Login Guard Installer\SQL Server Login Guard Installer.wixproj", "{B8F533FF-FD6A-4668-99C1-2225FBBD2EC6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuardTest", "GuardTest\GuardTest.csproj", "{2AA074AF-4E86-4F31-B7CC-52ECB6BC2663}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,22 @@ Global
 		{B8F533FF-FD6A-4668-99C1-2225FBBD2EC6}.Release|x64.Build.0 = Release|x64
 		{B8F533FF-FD6A-4668-99C1-2225FBBD2EC6}.Release|x86.ActiveCfg = Release|x86
 		{B8F533FF-FD6A-4668-99C1-2225FBBD2EC6}.Release|x86.Build.0 = Release|x86
+		{2AA074AF-4E86-4F31-B7CC-52ECB6BC2663}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AA074AF-4E86-4F31-B7CC-52ECB6BC2663}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AA074AF-4E86-4F31-B7CC-52ECB6BC2663}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{2AA074AF-4E86-4F31-B7CC-52ECB6BC2663}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{2AA074AF-4E86-4F31-B7CC-52ECB6BC2663}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2AA074AF-4E86-4F31-B7CC-52ECB6BC2663}.Debug|x64.Build.0 = Debug|Any CPU
+		{2AA074AF-4E86-4F31-B7CC-52ECB6BC2663}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2AA074AF-4E86-4F31-B7CC-52ECB6BC2663}.Debug|x86.Build.0 = Debug|Any CPU
+		{2AA074AF-4E86-4F31-B7CC-52ECB6BC2663}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AA074AF-4E86-4F31-B7CC-52ECB6BC2663}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2AA074AF-4E86-4F31-B7CC-52ECB6BC2663}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{2AA074AF-4E86-4F31-B7CC-52ECB6BC2663}.Release|ARM64.Build.0 = Release|Any CPU
+		{2AA074AF-4E86-4F31-B7CC-52ECB6BC2663}.Release|x64.ActiveCfg = Release|Any CPU
+		{2AA074AF-4E86-4F31-B7CC-52ECB6BC2663}.Release|x64.Build.0 = Release|Any CPU
+		{2AA074AF-4E86-4F31-B7CC-52ECB6BC2663}.Release|x86.ActiveCfg = Release|Any CPU
+		{2AA074AF-4E86-4F31-B7CC-52ECB6BC2663}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

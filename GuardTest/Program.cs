@@ -98,16 +98,16 @@ namespace GuardTest
 
         static string getIp(string msg)
         {
-            string pattern = @"\[CLIENT[\s-[\r\n]]\:\s(.*)\]";
+            string pattern = @"(?:[0-9]{1,3}\.){3}[0-9]{1,3}";
             RegexOptions options = RegexOptions.Multiline;
             var res = Regex.Matches(msg, pattern, options);
 
-            if (res.Count < 1 && res[0].Groups.Count < 1)
+            if (res.Count < 1 )
             {
                 return null;
             }
 
-            return res[0].Groups[1].Value;
+            return res[0].Value;
         }
     }
 }
