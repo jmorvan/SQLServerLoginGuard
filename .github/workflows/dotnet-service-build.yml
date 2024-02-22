@@ -19,6 +19,12 @@ jobs:
       with:
         repository: fbarresi/wix
         path: wix
+    - uses: actions/checkout@v4
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 4.5.x
+        
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
