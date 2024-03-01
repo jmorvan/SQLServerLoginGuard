@@ -12,8 +12,8 @@ namespace SQLServerLoginGuard
     public class SQLServerLoginGuardHelper
     {
 
-        int delay = 60000;
-        int eventLinesToRequest = 100;
+        int delay = 10;
+        int eventLinesToRequest = 1000;
         int blacklistTreshold = 10;
 
 
@@ -46,8 +46,11 @@ namespace SQLServerLoginGuard
             entries.ForEach(x =>
             {
                 var ip = getIp(x.Message);
-                if (dic.ContainsKey(ip)) dic[ip]++;
-                else dic[ip] = 1;
+                if (ip != null)
+                {
+                    if (dic.ContainsKey(ip)) dic[ip]++;
+                    else dic[ip] = 1;
+                }
             });
 
             Console.WriteLine("SUSPICIOUS IPs :");
@@ -65,15 +68,25 @@ namespace SQLServerLoginGuard
         {
 
             var log = new EventLog("Application");
-            return log.Entries.Cast<EventLogEntry>()
+            var seclog = new EventLog("Security");
+            var entries = new List<EventLogEntry>();
+
+            //sql login failed attemps
+            entries.AddRange( log.Entries.Cast<EventLogEntry>()
                           .Where(x => x.InstanceId == 3221243928 || x.EventID == 18456)
-                          .OrderByDescending(x => x.TimeWritten).Take(eventLinesToRequest).ToList();
+                          .OrderByDescending(x => x.TimeWritten).Take(eventLinesToRequest).ToList());
+            //winLogon failed attemps
+            entries.AddRange(seclog.Entries.Cast<EventLogEntry>()
+              .Where(x => x.EventID == 4625)
+              .OrderByDescending(x => x.TimeWritten).Take(eventLinesToRequest).ToList());
+
+            return entries;
         }
 
         public void setFwRule(string ip)
         {
 
-            var name = $"SQL Suspicious {ip}";
+            var name = $"Suspicious {ip}";
             Console.WriteLine("");
             Console.WriteLine($"Setting firewall rule named: {name}");
 

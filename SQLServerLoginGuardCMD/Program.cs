@@ -11,9 +11,9 @@ namespace SQLServerLoginGuard
 {
     internal class Program
     {
-        const int delay = 60000;
-        const int eventLinesToRequest = 1000;
-        const int blacklistTreshold = 10;
+        const int delay = 10000;
+        const int eventLinesToRequest = 10000;
+        const int blacklistTreshold = 5;
 
         static void Main(string[] args)
         {
